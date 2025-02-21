@@ -1,0 +1,36 @@
+name: CI
+on:
+  pull_request:
+env:
+  RUSTFLAGS: -Dwarnings
+
+jobs:
+  check_and_test:
+    name: It builds and tests pass
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install cargo-binstall
+      uses: cargo-bins/cargo-binstall@v1.10.15
+    - name: Install wkg
+      shell: bash
+      run: cargo binstall cargo-component
+    - name: Install Wasmtime
+      shell: bash
+      run: curl https://wasmtime.dev/install.sh -sSf | bash
+    - name: check
+      shell: bash
+      run: cargo component check
+    - name: test
+      shell: bash
+      run: cargo component test
+
+  check_style:
+    name: It follows all style conventions
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: clippy
+      run: cargo clippy -- -Dwarnings
+    - name: fmt
+      run: cargo fmt --all -- --check
