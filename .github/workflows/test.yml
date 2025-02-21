@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: rustup
+    - name: Add wasm32-wasip2 target
       run: rustup target add wasm32-wasip2
     - name: Install cargo-binstall
       uses: cargo-bins/cargo-binstall@v1.10.15
@@ -21,11 +21,11 @@ jobs:
       shell: bash
       run: |
         curl https://wasmtime.dev/install.sh -sSf | bash
-        source  ~/.bashrc
-    - name: check
+        export PATH="$HOME/.wasmtime/bin:$PATH"
+    - name: Run cargo check
       shell: bash
       run: cargo component check
-    - name: test
+    - name: Run cargo test
       shell: bash
       run: cargo component test
 
@@ -34,9 +34,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: rustup
+    - name: Install wasm32-wasip2 target
       run: rustup target add wasm32-wasip2
-    - name: clippy
+    - name: Run cargo clippy
       run: cargo clippy -- -Dwarnings
-    - name: fmt
+    - name: Run cargo fmt
       run: cargo fmt --all -- --check
