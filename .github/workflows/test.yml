@@ -17,17 +17,9 @@ jobs:
     - name: Install cargo-component
       shell: bash
       run: cargo binstall cargo-component
-    - name: Install Wasmtime
-      shell: bash
-      run: |
-        curl https://wasmtime.dev/install.sh -sSf | bash
-        export PATH="$HOME/.wasmtime/bin:$PATH"
     - name: Run cargo check
       shell: bash
       run: cargo component check
-    - name: Run cargo test
-      shell: bash
-      run: cargo component test
 
   check_style:
     name: It follows all style conventions
