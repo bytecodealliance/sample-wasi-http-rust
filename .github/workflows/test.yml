@@ -10,9 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - name: rustup
+      run: rustup target add wasm32-wasip2
     - name: Install cargo-binstall
       uses: cargo-bins/cargo-binstall@v1.10.15
-    - name: Install wkg
+    - name: Install cargo-component
       shell: bash
       run: cargo binstall cargo-component
     - name: Install Wasmtime
@@ -30,6 +32,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - name: rustup
+      run: rustup target add wasm32-wasip2
     - name: clippy
       run: cargo clippy -- -Dwarnings
     - name: fmt
