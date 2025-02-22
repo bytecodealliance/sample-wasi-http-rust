@@ -1,5 +1,7 @@
 use std::io::{BufRead, BufReader};
 use std::process::{Child, Command, Stdio};
+use std::thread;
+use std::time::Duration;
 
 pub struct ServerGuard {
     child: Child,
@@ -23,7 +25,7 @@ impl ServerGuard {
 
         // Get stdout handle and create a reader
         let stderr = child.stderr.take().expect("Failed to capture stdout");
-        let mut reader = BufReader::new(stderr);
+        let reader = BufReader::new(stderr);
 
         // Read lines until we see the listening message
         for line in reader.lines() {
@@ -36,6 +38,8 @@ impl ServerGuard {
 
         // Set stdout to inherit for remaining output
         child.stdout = None;
+
+        thread::sleep(Duration::from_millis(500));
 
         ServerGuard { child, port }
     }
