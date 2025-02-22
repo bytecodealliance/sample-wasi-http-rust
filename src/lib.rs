@@ -47,11 +47,21 @@ async fn echo(mut req: Request<IncomingBody>, res: Responder) -> Finished {
     Finished::finish(body, result, None)
 }
 
-async fn echo_headers(req: Request<IncomingBody>, responder: Responder) -> Finished {
-    let mut res = Response::builder();
-    *res.headers_mut().unwrap() = req.into_parts().0.headers;
-    let res = res.body(empty()).unwrap();
-    responder.respond(res).await
+async fn echo_headers(req: Request<IncomingBody>, res: Responder) -> Finished {
+    let mut body = res.start_response(Response::new(BodyForthcoming));
+    let mut result = Ok(());
+
+    for (name, value) in req.headers().iter() {
+        if let Err(e) = body
+            .write_all(format!("{}: {}\n", name, value.to_str().unwrap_or("")).as_bytes())
+            .await
+        {
+            result = Err(e);
+            break;
+        }
+    }
+
+    Finished::finish(body, result, None)
 }
 
 async fn echo_trailers(req: Request<IncomingBody>, res: Responder) -> Finished {
