@@ -64,6 +64,8 @@ jobs:
         run: |
           cargo binstall cargo-component --force --version ${{ env.CARGO_COMPONENT_VERSION }}
           cargo binstall wkg --force 
+          cargo install cargo-auditable cargo-audit
+          alias cargo="cargo auditable"
 
       - name: Build the component
         run: cargo component build --release
