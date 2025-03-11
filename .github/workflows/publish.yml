@@ -8,7 +8,7 @@ on:
 
 env:
   IMAGE_NAME: ${{ github.repository }}
-  COMPONENT_NAME: rust-wasi-hello
+  COMPONENT_NAME: sample-wasi-http-rust
   CARGO_COMPONENT_VERSION: "0.16.0"
 
 jobs:
