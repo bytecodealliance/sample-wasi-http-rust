@@ -1,9 +1,16 @@
-# WASI Rust Sample
+# Sample: `wasi:http` in Rust
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/yoshuawuyts/rust-wasi-hello)
 
-An example project showing how to build an HTTP server for WASI 0.2 built in
-Rust.
+An example project showing how to build a spec-compliant
+[`wasi:http/proxy`][wasi-http] server for WASI 0.2 written in Rust. This sample
+includes several [routes](#routes) that showcase different behavior. This sample
+can be run by any spec-compliant `wasi:http/proxy` server.
+
+Each release of this sample is packaged up as a [Wasm OCI image][wasm-oci-image]
+and published to the [GitHub Packages Registry][gh-pkg]. See the ["Deploying
+published artifacts"][using-arifacts] section for more on how to fetch and run
+the published artifacts.
 
 ## Routes
 
@@ -38,7 +45,7 @@ The HTTP server uses the `wasi:http/proxy` world. You can run it locally in a
 $ cargo component serve
 ```
 
-## Working with deployment artifacts
+## Deploying published artifacts
 
 This project automatically published compiled Wasm Components as OCI to GitHub
 Artifacts. You can pull the artifact with any OCI-compliant tooling and run it
@@ -47,8 +54,8 @@ latest published version from GitHub releases and run it in a local `wasmtime`
 instance you can run the following command:
 
 ```bash
-$ wkg pull ghcr.io/yoshuawuyts/rust-wasi-hello:latest
-$ wasmtime serve rust-wasi-hello.wasm
+$ wkg pull ghcr.io/bytecodealliance/sample-wasi-http-rust/sample-wasi-http-rust:latest
+$ wasmtime serve sample-wasi-http-rust.wasm
 ```
 
 For production workloads however, you may want to use other runtimes or
@@ -66,3 +73,7 @@ on the pull + serve pattern we've shown here.
 Apache-2.0 with LLVM Exception
 
 [cargo-component]: https://github.com/bytecodealliance/cargo-component
+[wasm-oci-image]: https://tag-runtime.cncf.io/wgs/wasm/deliverables/wasm-oci-artifact/
+[gh-pkg]: https://github.com/bytecodealliance/sample-wasi-http-rust/pkgs/container/sample-wasi-http-rust%2Fsample-wasi-http-rust
+[using-arifacts]: #working-with-deployment-artifacts
+[wasi-http]: https://github.com/WebAssembly/wasi-http
