@@ -1,5 +1,5 @@
 [package]
-name = "rust-wasi-hello"
+name = "sample-wasi-http-rust"
 version = "0.0.0"
 edition = "2021"
 publish = false
@@ -8,7 +8,7 @@ publish = false
 crate-type = ["cdylib"]
 
 [package.metadata.component]
-package = "component:rust-wasi-hello"
+package = "component:sample-wasi-http-rust"
 # This tells cargo-component to use a special adapter, which doesn't depend on
 # `get-environment` or other things not present in the proxy world.
 proxy = true
