@@ -23,6 +23,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Install cargo-binstall
+        uses: cargo-bins/cargo-binstall@v1.10.15
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
@@ -59,8 +62,8 @@ jobs:
         name: Install build dependencies
         continue-on-error: false
         run: |
-          cargo install cargo-component --force --version ${{ env.CARGO_COMPONENT_VERSION }}
-          cargo install wkg --force 
+          cargo binstall cargo-component --force --version ${{ env.CARGO_COMPONENT_VERSION }}
+          cargo binstall wkg --force 
 
       - name: Build the component
         run: cargo component build --release
