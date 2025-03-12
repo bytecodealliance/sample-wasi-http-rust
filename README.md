@@ -50,11 +50,11 @@ $ cargo component serve
 This project automatically published compiled Wasm Components as OCI to GitHub
 Artifacts. You can pull the artifact with any OCI-compliant tooling and run it
 in any Wasm runtime that supports the `wasi:http/proxy` world. To fetch the
-latest published version from GitHub releases and run it in a local `wasmtime`
-instance you can run the following command:
+latest published version from GitHub releases using [wkg][wkg] and run it in a
+local [`wasmtime` instance][wasmtime] you can run the following commands:
 
 ```bash
-$ wkg pull ghcr.io/bytecodealliance/sample-wasi-http-rust/sample-wasi-http-rust:latest
+$ wkg oci pull ghcr.io/bytecodealliance/sample-wasi-http-rust/sample-wasi-http-rust:latest
 $ wasmtime serve sample-wasi-http-rust.wasm
 ```
 
@@ -77,3 +77,5 @@ Apache-2.0 with LLVM Exception
 [gh-pkg]: https://github.com/bytecodealliance/sample-wasi-http-rust/pkgs/container/sample-wasi-http-rust%2Fsample-wasi-http-rust
 [using-arifacts]: #working-with-deployment-artifacts
 [wasi-http]: https://github.com/WebAssembly/wasi-http
+[wkg]: https://github.com/bytecodealliance/wasm-pkg-tools/tree/main/crates/wkg
+[wasmtime]: https://wasmtime.dev
