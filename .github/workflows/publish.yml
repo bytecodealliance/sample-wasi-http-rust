@@ -72,9 +72,7 @@ jobs:
           cargo binstall cargo-auditable cargo-audit
 
       - name: Build the component
-        run: |
-          alias cargo="cargo auditable"
-          cargo component build --release
+        run: cargo auditable component build --release
 
       - name: Normalize COMPONENT_NAME and Append .wasm
         run: echo "COMPONENT_NAME_UNDERSCORED=${COMPONENT_NAME//-/_}.wasm" >> $GITHUB_ENV
