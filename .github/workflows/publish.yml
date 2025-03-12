@@ -77,9 +77,9 @@ jobs:
       - name: Normalize COMPONENT_NAME and Append .wasm
         run: echo "COMPONENT_NAME_UNDERSCORED=${COMPONENT_NAME//-/_}.wasm" >> $GITHUB_ENV
 
-      - name: Publish to GitHub Container Registry
+      - name: Publish `:<version>` to GitHub Container Registry
         if: github.event_name != 'workflow_dispatch'
-        id: publish
+        id: publish_versioned
         uses: bytecodealliance/wkg-github-action@v5
         with:
           file: target/wasm32-wasip1/release/${{ env.COMPONENT_NAME_UNDERSCORED }}
@@ -90,6 +90,24 @@ jobs:
           homepage: ${{ env.COMPONENT_HOMEPAGE }}
           licenses: ${{ env.COMPONENT_LICENSES }}
 
-      - name: Sign the wasm component
+      - name: Sign the versioned wasm component
         if: github.event_name != 'workflow_dispatch'
-        run: cosign sign --yes ghcr.io/${{ env.IMAGE_NAME }}/${{ env.COMPONENT_NAME }}@${{ steps.publish.outputs.digest }}
+        run: cosign sign --yes ghcr.io/${{ env.IMAGE_NAME }}/${{ env.COMPONENT_NAME }}@${{ steps.publish_versioned.outputs.digest }}
+
+      - name: Publish `:latest` release to GitHub Container Registry
+        if: github.event_name != 'workflow_dispatch'
+        id: publish_latest
+        uses: bytecodealliance/wkg-github-action@v5
+        with:
+          file: target/wasm32-wasip1/release/${{ env.COMPONENT_NAME_UNDERSCORED }}
+          oci-reference-without-tag: ghcr.io/${{ env.IMAGE_NAME }}/${{ env.COMPONENT_NAME }}
+          version: latest
+          description: ${{ env.COMPONENT_DESCRIPTION }}
+          source: ${{ env.COMPONENT_SOURCE }}
+          homepage: ${{ env.COMPONENT_HOMEPAGE }}
+          licenses: ${{ env.COMPONENT_LICENSES }}
+
+      - name: Sign the latest wasm component
+        if: github.event_name != 'workflow_dispatch'
+        run: cosign sign --yes ghcr.io/${{ env.IMAGE_NAME }}/${{ env.COMPONENT_NAME }}@${{ steps.publish_latest.outputs.digest }}
+
