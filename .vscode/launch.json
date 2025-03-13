@@ -8,6 +8,7 @@
       "type": "lldb",
       "request": "launch",
       "name": "LLDB Debug",
+      "preLaunchTask": "Build WebAssembly",      
       "program": "wasmtime",
       "args": [
         "serve",
@@ -15,9 +16,31 @@
         "debug-info=y",
         "--dir",
         ".",
-        "${workspaceFolder}/target/wasm32-wasip1/debug/sample_wasi_http_rust.wasm",
+        "${workspaceFolder}/target/wasm32-wasip1/debug/sample_wasi_http_rust.wasm"
       ],
       "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "GDB debug",
+      "type":"cppdbg",
+      "request": "launch",
+      "preLaunchTask": "Build WebAssembly",
+      "program": "/home/<username>/.wasmtime/bin/wasmtime",
+      "args": [
+        "serve",
+        "-D",
+        "debug-info=y",
+        "--dir",
+        ".",
+        "${workspaceFolder}/target/wasm32-wasip1/debug/sample_wasi_http_rust.wasm"
+      ],
+      "cwd": "${workspaceFolder}",
+      "MIMode": "gdb",
+      "setupCommands": [
+          {
+              "text": "-enable-pretty-printing",
+          }
+      ]
     }
   ]
 }
