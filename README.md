@@ -44,6 +44,8 @@ The HTTP server uses the `wasi:http/proxy` world. You can run it locally in a
 ```rust
 $ cargo component serve
 ```
+### Note on Debugging
+There are launch and task configuration files if you want to use VSCode for debugging in an IDE; however, if you prefer using GDB or LLDB directly the configuration files should be enough to get you up and running. Note that the [GDB configuration requires an absolute path](https://github.com/bytecodealliance/sample-wasi-http-rust/blob/fe47fc9f6c87d09575f6683a26f9a67e3e71aa26/.vscode/launch.json#L28), so that configuration in VSCode you will need to modify for your computer.
 
 ## Deploying published artifacts
 
