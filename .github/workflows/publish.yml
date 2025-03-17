@@ -8,13 +8,7 @@ on:
 
 env:
   IMAGE_NAME: ${{ github.repository }}
-  CARGO_COMPONENT_VERSION: "0.16.0"
-  # TODO: These can be removed once https://github.com/bytecodealliance/cargo-component/pull/372 is merged
-  COMPONENT_NAME: sample-wasi-http-rust
-  COMPONENT_DESCRIPTION: "A sample WASI HTTP component written in Rust"
-  COMPONENT_SOURCE: "https://github.com/bytecodealliance/sample-wasi-http-rust"
-  COMPONENT_HOMEPAGE: "https://github.com/bytecodealliance/sample-wasi-http-rust"
-  COMPONENT_LICENSES: "Apache-2.0 WITH LLVM-exception"
+  CARGO_COMPONENT_VERSION: "0.21.0"
 
 jobs:
   publish:
@@ -85,10 +79,6 @@ jobs:
           file: target/wasm32-wasip1/release/${{ env.COMPONENT_NAME_UNDERSCORED }}
           oci-reference-without-tag: ghcr.io/${{ env.IMAGE_NAME }}/${{ env.COMPONENT_NAME }}
           version: ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
-          description: ${{ env.COMPONENT_DESCRIPTION }}
-          source: ${{ env.COMPONENT_SOURCE }}
-          homepage: ${{ env.COMPONENT_HOMEPAGE }}
-          licenses: ${{ env.COMPONENT_LICENSES }}
 
       - name: Sign the versioned wasm component
         if: github.event_name != 'workflow_dispatch'
@@ -102,10 +92,6 @@ jobs:
           file: target/wasm32-wasip1/release/${{ env.COMPONENT_NAME_UNDERSCORED }}
           oci-reference-without-tag: ghcr.io/${{ env.IMAGE_NAME }}/${{ env.COMPONENT_NAME }}
           version: latest
-          description: ${{ env.COMPONENT_DESCRIPTION }}
-          source: ${{ env.COMPONENT_SOURCE }}
-          homepage: ${{ env.COMPONENT_HOMEPAGE }}
-          licenses: ${{ env.COMPONENT_LICENSES }}
 
       - name: Sign the latest wasm component
         if: github.event_name != 'workflow_dispatch'
