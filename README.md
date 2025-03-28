@@ -1,6 +1,6 @@
 # Sample: `wasi:http` in Rust
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/yoshuawuyts/rust-wasi-hello)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/bytecodealliance/sample-wasi-http-rust)
 
 An example project showing how to build a spec-compliant
 [`wasi:http/proxy`][wasi-http] server for WASI 0.2 written in Rust. This sample
