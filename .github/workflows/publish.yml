@@ -101,7 +101,7 @@ jobs:
 
       - name: Sign the SBOM for the versioned Wasm component
         if: github.event_name != 'workflow_dispatch'
-        run: cosign attest --type spdxjson --predicate ${{ env.COMPONENT_NAME }}.spdx.json ${{ steps.publish_versioned.outputs.digest }}
+        run: cosign attest --yes --type spdxjson --predicate ${{ env.COMPONENT_NAME }}.spdx.json ${{ steps.publish_versioned.outputs.digest }}
 
       - name: Publish `:latest` release to GitHub Container Registry
         if: github.event_name != 'workflow_dispatch'
@@ -122,4 +122,4 @@ jobs:
 
       - name: Sign the SBOM for the latest Wasm component
         if: github.event_name != 'workflow_dispatch'
-        run: cosign attest --type spdxjson --predicate ${{ env.COMPONENT_NAME }}.spdx.json ${{ steps.publish_latest.outputs.digest }}
+        run: cosign attest --yes --type spdxjson --predicate ${{ env.COMPONENT_NAME }}.spdx.json ${{ steps.publish_latest.outputs.digest }}
