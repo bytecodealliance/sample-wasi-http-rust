@@ -14,5 +14,5 @@ package = "component:sample-wasi-http-rust"
 proxy = true
 
 [dependencies]
-wit-bindgen-rt = { version = "0.41.0", features = ["bitflags"] }
+wit-bindgen-rt = { version = "0.44.0", features = ["bitflags"] }
 wstd = "0.5.4"
