@@ -3,5 +3,8 @@ FROM mcr.microsoft.com/devcontainers/rust:${TAG}
 
 USER vscode
 
-COPY ./scripts /tmp/scripts/
-RUN bash /tmp/scripts/install.sh
+# Install wasmtime
+RUN curl https://wasmtime.dev/install.sh -sSf | bash
+
+# Install cargo-component and wkg
+RUN cargo install cargo-component wkg
