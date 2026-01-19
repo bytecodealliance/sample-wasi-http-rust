@@ -1,5 +1,5 @@
 {
-    "image": "ghcr.io/bytecodealliance/sample-wasi-http-rust-devcontainer:latest",
+    "image": "ghcr.io/bytecodealliance/sample-wasi-http-rust/devcontainer:latest",
     "features": {
         //"ghcr.io/devcontainers/features/rust:1": {},
         "ghcr.io/devcontainers/features/azure-cli:1": {}
