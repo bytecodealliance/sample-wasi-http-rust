@@ -1,0 +1,5 @@
+package component:sample-wasi-http-rust;
+
+world sample-wasi-http-rust {
+  include wasi:http/proxy@0.2.2;
+}
