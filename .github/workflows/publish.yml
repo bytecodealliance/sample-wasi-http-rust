@@ -8,8 +8,6 @@ on:
 
 env:
   IMAGE_NAME: ${{ github.repository }}
-  CARGO_COMPONENT_VERSION: "0.16.0"
-  # TODO: These can be removed once https://github.com/bytecodealliance/cargo-component/pull/372 is merged
   COMPONENT_NAME: sample-wasi-http-rust
   COMPONENT_DESCRIPTION: "A sample WASI HTTP component written in Rust"
   COMPONENT_SOURCE: "https://github.com/bytecodealliance/sample-wasi-http-rust"
@@ -67,27 +65,29 @@ jobs:
         name: Install build dependencies
         continue-on-error: false
         run: |
-          cargo binstall cargo-component --force --version ${{ env.CARGO_COMPONENT_VERSION }}
-          cargo binstall wkg --force 
+          cargo binstall wkg --force
           cargo binstall cargo-auditable cargo-audit
           cargo binstall auditable2cdx
 
+      - name: Add wasm32-wasip2 target
+        run: rustup target add wasm32-wasip2
+
       - name: Build the component
-        run: cargo auditable component build --release
+        run: cargo auditable build --release --target wasm32-wasip2
 
       - name: Normalize COMPONENT_NAME and Append .wasm
         run: echo "COMPONENT_NAME_UNDERSCORED=${COMPONENT_NAME//-/_}.wasm" >> $GITHUB_ENV
 
       - name: Extract the SBOM from the component
         if: github.event_name != 'workflow_dispatch'
-        run: auditable2cdx target/wasm32-wasip1/release/${{ env.COMPONENT_NAME_UNDERSCORED }} >> ${{ env.COMPONENT_NAME }}.spdx.json
+        run: auditable2cdx target/wasm32-wasip2/release/${{ env.COMPONENT_NAME_UNDERSCORED }} >> ${{ env.COMPONENT_NAME }}.spdx.json
 
       - name: Publish `:<version>` to GitHub Container Registry
         if: github.event_name != 'workflow_dispatch'
         id: publish_versioned
         uses: bytecodealliance/wkg-github-action@v5
         with:
-          file: target/wasm32-wasip1/release/${{ env.COMPONENT_NAME_UNDERSCORED }}
+          file: target/wasm32-wasip2/release/${{ env.COMPONENT_NAME_UNDERSCORED }}
           oci-reference-without-tag: ghcr.io/${{ env.IMAGE_NAME }}/${{ env.COMPONENT_NAME }}
           version: ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
           description: ${{ env.COMPONENT_DESCRIPTION }}
@@ -108,7 +108,7 @@ jobs:
         id: publish_latest
         uses: bytecodealliance/wkg-github-action@v5
         with:
-          file: target/wasm32-wasip1/release/${{ env.COMPONENT_NAME_UNDERSCORED }}
+          file: target/wasm32-wasip2/release/${{ env.COMPONENT_NAME_UNDERSCORED }}
           oci-reference-without-tag: ghcr.io/${{ env.IMAGE_NAME }}/${{ env.COMPONENT_NAME }}
           version: latest
           description: ${{ env.COMPONENT_DESCRIPTION }}

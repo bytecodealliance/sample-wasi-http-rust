@@ -32,17 +32,29 @@ would prefer to run this locally, you can run the following commands:
 
 ```bash
 $ curl https://wasmtime.dev/install.sh -sSf | bash # install wasm runtime
-$ cargo install cargo-component                    # install build tooling
 $ cargo install wkg                                # install wasm OCI tooling
 ```
 
+## Fetching WIT Dependencies
+
+This project uses [wkg][wkg] to manage WIT dependencies. To fetch the required
+WIT packages, run:
+
+```bash
+$ wkg wit fetch
+```
+
+This will download the WIT dependencies specified in the project and populate
+the `wit/deps` directory. The `wkg.lock` file tracks the resolved versions.
+
 ## Local Development
 
-The HTTP server uses the `wasi:http/proxy` world. You can run it locally in a
-`wasmtime` instance by using the following [cargo-component] command:
+The HTTP server uses the `wasi:http/proxy` world. You can build and run it
+locally using cargo and wasmtime:
 
-```rust
-$ cargo component serve
+```bash
+$ cargo build --release --target wasm32-wasip2  # build the component
+$ wasmtime serve -Scli -Shttp target/wasm32-wasip2/release/sample_wasi_http_rust.wasm
 ```
 ### Note on Debugging
 There are launch and task configuration files if you want to use VSCode for debugging in an IDE; however, if you prefer using GDB or LLDB directly the configuration files should be enough to get you up and running. Note that the [GDB configuration requires an absolute path](https://github.com/bytecodealliance/sample-wasi-http-rust/blob/fe47fc9f6c87d09575f6683a26f9a67e3e71aa26/.vscode/launch.json#L28), so that configuration in VSCode you will need to modify for your computer.
@@ -57,7 +69,7 @@ local [`wasmtime` instance][wasmtime] you can run the following commands:
 
 ```bash
 $ wkg oci pull ghcr.io/bytecodealliance/sample-wasi-http-rust/sample-wasi-http-rust:latest
-$ wasmtime serve sample-wasi-http-rust.wasm
+$ wasmtime serve -Scli -Shttp sample-wasi-http-rust.wasm
 ```
 
 For production workloads however, you may want to use other runtimes or
@@ -65,16 +77,10 @@ integrations which provide their own OCI integrations. Deployment will vary
 depending on you providers, though at their core they will tend to be variations
 on the pull + serve pattern we've shown here.
 
-## See Also
-
-**Hosts**
-- [sample-wasi-http-aks-wasmcloud](https://github.com/yoshuawuyts/sample-wasi-http-aks-wasmcloud) - A `wasi:http` example host environment running on AKS using the WasmCloud runtime
-
 ## License
 
 Apache-2.0 with LLVM Exception
 
-[cargo-component]: https://github.com/bytecodealliance/cargo-component
 [wasm-oci-image]: https://tag-runtime.cncf.io/wgs/wasm/deliverables/wasm-oci-artifact/
 [gh-pkg]: https://github.com/bytecodealliance/sample-wasi-http-rust/pkgs/container/sample-wasi-http-rust%2Fsample-wasi-http-rust
 [using-arifacts]: #working-with-deployment-artifacts
