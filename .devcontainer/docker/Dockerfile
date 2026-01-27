@@ -7,4 +7,4 @@ USER vscode
 RUN curl https://wasmtime.dev/install.sh -sSf | bash
 
 # Install cargo-component and wkg
-RUN cargo install cargo-component wkg
+RUN cargo install wkg
