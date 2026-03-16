@@ -1,28 +1,24 @@
-use wstd::http::body::{BodyForthcoming, IncomingBody};
-use wstd::http::server::{Finished, Responder};
-use wstd::http::{IntoBody, Request, Response, StatusCode};
-use wstd::io::{copy, empty, AsyncWrite};
+use wstd::http::{body::Bytes, Body, Request, Response, Result, StatusCode};
 use wstd::time::{Duration, Instant};
 
 #[wstd::http_server]
-async fn main(req: Request<IncomingBody>, res: Responder) -> Finished {
+async fn main(req: Request<Body>) -> Result<Response<Body>> {
     match req.uri().path_and_query().unwrap().as_str() {
-        "/wait" => wait(req, res).await,
-        "/echo" => echo(req, res).await,
-        "/echo-headers" => echo_headers(req, res).await,
-        "/echo-trailers" => echo_trailers(req, res).await,
-        "/" => home(req, res).await,
-        _ => not_found(req, res).await,
+        "/wait" => wait(req).await,
+        "/echo" => echo(req).await,
+        "/echo-headers" => echo_headers(req).await,
+        "/echo-trailers" => echo_trailers(req).await,
+        "/" => home(req).await,
+        _ => not_found(req).await,
     }
 }
 
-async fn home(_req: Request<IncomingBody>, res: Responder) -> Finished {
-    // To send a single string as the response body, use `res::respond`.
-    res.respond(Response::new("Hello, wasi:http/proxy world!\n".into_body()))
-        .await
+async fn home(_req: Request<Body>) -> Result<Response<Body>> {
+    // To send a single string as the response body:
+    Ok(Response::new("Hello, wasi:http/proxy world!\n".into()))
 }
 
-async fn wait(_req: Request<IncomingBody>, res: Responder) -> Finished {
+async fn wait(_req: Request<Body>) -> Result<Response<Body>> {
     // Get the time now
     let now = Instant::now();
 
@@ -32,41 +28,43 @@ async fn wait(_req: Request<IncomingBody>, res: Responder) -> Finished {
     // Compute how long we slept for.
     let elapsed = Instant::now().duration_since(now).as_millis();
 
-    // To stream data to the response body, use `res::start_response`.
-    let mut body = res.start_response(Response::new(BodyForthcoming));
-    let result = body
-        .write_all(format!("slept for {elapsed} millis\n").as_bytes())
-        .await;
-    Finished::finish(body, result, None)
+    Ok(Response::new(
+        format!("slept for {elapsed} millis\n").into(),
+    ))
 }
 
-async fn echo(mut req: Request<IncomingBody>, res: Responder) -> Finished {
+async fn echo(req: Request<Body>) -> Result<Response<Body>> {
     // Stream data from the req body to the response body.
-    let mut body = res.start_response(Response::new(BodyForthcoming));
-    let result = copy(req.body_mut(), &mut body).await;
-    Finished::finish(body, result, None)
+    let req_body = req.into_body();
+    Ok(Response::new(req_body))
 }
 
-async fn echo_headers(req: Request<IncomingBody>, responder: Responder) -> Finished {
+async fn echo_headers(req: Request<Body>) -> Result<Response<Body>> {
     let mut res = Response::builder();
     *res.headers_mut().unwrap() = req.into_parts().0.headers;
-    let res = res.body(empty()).unwrap();
-    responder.respond(res).await
+    Ok(res.body(().into()).expect("builder success"))
 }
 
-async fn echo_trailers(req: Request<IncomingBody>, res: Responder) -> Finished {
-    let body = res.start_response(Response::new(BodyForthcoming));
-    let (trailers, result) = match req.into_body().finish().await {
-        Ok(trailers) => (trailers, Ok(())),
-        Err(err) => (Default::default(), Err(std::io::Error::other(err))),
+async fn echo_trailers(req: Request<Body>) -> Result<Response<Body>> {
+    use http_body_util::{BodyExt, Full};
+    let collected = req.into_body().into_boxed_body().collect().await?;
+    let (trailers, report) = if let Some(trailers) = collected.trailers() {
+        (
+            Some(Ok(trailers.clone())),
+            format!("recieved trailers: {trailers:?}"),
+        )
+    } else {
+        (None, "request had no trailers".to_owned())
     };
-    Finished::finish(body, result, trailers)
+
+    Ok(Response::new(Body::from_http_body(
+        Full::new(Bytes::from(report)).with_trailers(async { trailers }),
+    )))
 }
 
-async fn not_found(_req: Request<IncomingBody>, responder: Responder) -> Finished {
-    let res = Response::builder()
+async fn not_found(_req: Request<Body>) -> Result<Response<Body>> {
+    Ok(Response::builder()
         .status(StatusCode::NOT_FOUND)
-        .body(empty())
-        .unwrap();
-    responder.respond(res).await
+        .body(().into())
+        .expect("builder succeeds"))
 }
