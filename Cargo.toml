@@ -4,9 +4,6 @@ version = "0.0.0"
 edition = "2021"
 publish = false
 
-[lib]
-crate-type = ["cdylib"]
-
 [dependencies]
-wit-bindgen-rt = { version = "0.41.0", features = ["bitflags"] }
-wstd = "0.5.4"
+http-body-util = "0.1.3"
+wstd = "0.6"
