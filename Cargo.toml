@@ -4,6 +4,9 @@ version = "0.0.0"
 edition = "2021"
 publish = false
 
+[lib]
+crate-type = ["cdylib"]
+
 [dependencies]
 http-body-util = "0.1.3"
 wstd = "0.6"
