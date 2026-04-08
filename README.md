@@ -83,7 +83,7 @@ Apache-2.0 with LLVM Exception
 
 [wasm-oci-image]: https://tag-runtime.cncf.io/wgs/wasm/deliverables/wasm-oci-artifact/
 [gh-pkg]: https://github.com/bytecodealliance/sample-wasi-http-rust/pkgs/container/sample-wasi-http-rust%2Fsample-wasi-http-rust
-[using-arifacts]: #working-with-deployment-artifacts
+[using-arifacts]: #deploying-published-artifacts
 [wasi-http]: https://github.com/WebAssembly/wasi-http
 [wkg]: https://github.com/bytecodealliance/wasm-pkg-tools/tree/main/crates/wkg
 [wasmtime]: https://wasmtime.dev
